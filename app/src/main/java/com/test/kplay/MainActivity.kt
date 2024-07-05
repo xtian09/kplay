@@ -1,8 +1,11 @@
 package com.test.kplay
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.UserHandle
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -30,6 +33,7 @@ import com.test.kplay.ui.DemoTheme
 import com.test.kplay.ui.SensorNavigation
 import com.test.kplay.ui.VendorSensor
 
+
 class MainActivity : ComponentActivity() {
 
     companion object {
@@ -49,14 +53,15 @@ class MainActivity : ComponentActivity() {
             VendorSensor.entries.toTypedArray()[savedInstanceState?.getInt(KEY_SENSOR) ?: 0]
         setContent {
             DemoTheme {
-                BodySensorPermissionScreen()
+//                BodySensorPermissionScreen()
+                ButtonScreen()
             }
         }
         onBackPressedDispatcher.addCallback(
             object : OnBackPressedCallback(enabled = true) {
                 override fun handleOnBackPressed() {
-                    if (mCurrentSensor != VendorSensor.NONE) mCurrentSensor =
-                        VendorSensor.NONE else finish()
+//                    if (mCurrentSensor != VendorSensor.NONE) mCurrentSensor =
+//                        VendorSensor.NONE else finish()
                 }
             },
         )
@@ -65,6 +70,34 @@ class MainActivity : ComponentActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(KEY_SENSOR, mCurrentSensor.ordinal)
+    }
+
+    @Composable
+    fun ButtonScreen() {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Button(onClick = { launchUrl("com.cmri.universalapp://param?7B0A20202020202275726C223A2022636D63633A2F2F6469676974616C686F6D652F736D617274686F6D652F636F6D6D6F6E4465766963653F6469643D434D43432D3538393430352D37373633313730303030323337353031220A7D") }) {
+                Text("light")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { launchUrl("com.cmri.universalapp://param?7B0A20202020202275726C223A2022636D63633A2F2F6469676974616C686F6D652F736D617274686F6D652F636F6D6D6F6E4465766963653F6469643D434D43432D3538393831322D6E71654F615831373236373337343038313330220A7D") }) {
+                Text("tv")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { launchUrl("com.cmri.universalapp://param?7B0A20202020202275726C223A2022636D63633A2F2F6469676974616C686F6D652F736D617274686F6D652F636F6D6D6F6E4465766963653F6469643D434D43432D3538393838332D6E71654F615831373236323132323936373833220A7D") }) {
+                Text("fan")
+            }
+        }
+    }
+
+    private fun launchUrl(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setData(Uri.parse(url))
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     @Composable
